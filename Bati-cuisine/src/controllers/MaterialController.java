@@ -43,7 +43,6 @@ public class MaterialController {
                     // Create material and add to the list
                     Material material = new Material(materialName, unitCost, quantity, tax, transportCost, qualityCoeff);
                     materials.add(material);
-
                     System.out.println("Do you wish to add another material? (y/n)");
                     answer = scanner.nextLine().toLowerCase();
                     if (!answer.equals("y")) {
@@ -57,6 +56,8 @@ public class MaterialController {
 
                 if (check) {
                     System.out.println("Materials added successfully.");
+                    LabourerController labourerController = new LabourerController();
+                    labourerController.addLabourer(scanner, project);
                 } else {
                     System.out.println("Failed to add materials.");
                 }
