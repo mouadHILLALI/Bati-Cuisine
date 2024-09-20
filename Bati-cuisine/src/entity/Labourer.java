@@ -22,6 +22,8 @@ public class Labourer {
         this.taxRate = taxRate;
         this.productivityCoefficient = productivityCoefficient;
     }
+    public Labourer(){
+    }
     public int getId() {
         return id;
     }
