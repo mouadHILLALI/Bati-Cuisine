@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
 
 public class ProjectDaoImpl implements ProjectDao {
 
@@ -58,8 +60,44 @@ public class ProjectDaoImpl implements ProjectDao {
     }
     @Override
     public <T> boolean update(T t) {
+        Connection connection = null;
+        PreparedStatement ps = null;
+
+        try {
+            DatabaseConnection db = new DatabaseConnection();
+            connection = db.getConnection();
+            if (t instanceof Project) {
+                Project project = (Project) t;
+                String sql = "UPDATE projects SET projectname = ?, surface = ?, projectstatus = ?, beneficialmargin = ?, totalcost = ?, taxrate = ? WHERE id = ?";
+                ps = connection.prepareStatement(sql);
+                // Set parameters for project
+                ps.setString(1, project.getProjectName());
+                ps.setDouble(2, project.getSurface());
+                ps.setString(3, String.valueOf(project.getStatus()));
+                ps.setDouble(4, project.getBeneficialMargin());
+                ps.setDouble(5, project.getTotalCost());
+                ps.setDouble(6, project.getTaxRate());
+                ps.setInt(7, project.getId());
+                int rowsAffected = ps.executeUpdate();
+                if (rowsAffected > 0) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            // Ensure resources are closed
+            try {
+                if (ps != null) ps.close();
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
         return false;
     }
+
 
     @Override
     public <T> boolean delete(T t) {
@@ -69,6 +107,11 @@ public class ProjectDaoImpl implements ProjectDao {
     @Override
     public <T> boolean find(T t) {
         return false;
+    }
+
+    @Override
+    public <T> List<T> getAll(T t) {
+        return Collections.emptyList();
     }
 
 
