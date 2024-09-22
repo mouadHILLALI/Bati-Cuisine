@@ -14,12 +14,6 @@ public class DatabaseConnection {
         Connection connection = null;
         try {
             connection = DriverManager.getConnection(jdbcUrl, username, password);
-
-            if (connection != null) {
-                System.out.println("Database connection established");
-            } else {
-                System.out.println("Database connection not established");
-            }
         } catch (SQLException e) {
             System.out.println("Connection failed: " + e.getMessage());
             e.printStackTrace();

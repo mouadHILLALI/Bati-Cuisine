@@ -15,6 +15,12 @@ public class Devis {
         this.expirationDate = expirationDate;
         this.isAccepted = isAccepted;
     }
+    public Devis(double estimatedAmount, Date emissionDate, Date expirationDate, boolean isAccepted) {
+        this.estimatedAmount = estimatedAmount;
+        this.emissionDate = emissionDate;
+        this.expirationDate = expirationDate;
+        this.isAccepted = isAccepted;
+    }
     public int getId() {
         return id;
     }
@@ -27,14 +33,14 @@ public class Devis {
     public void setEstimatedAmount(double estimatedAmount) {
         this.estimatedAmount = estimatedAmount;
     }
-    public Date getEmissionDate() {
-        return emissionDate;
+    public java.sql.Date getEmissionDate() {
+        return (java.sql.Date) emissionDate;
     }
     public void setEmissionDate(Date emissionDate) {
         this.emissionDate = emissionDate;
     }
-    public Date getExpirationDate() {
-        return expirationDate;
+    public java.sql.Date getExpirationDate() {
+        return (java.sql.Date) expirationDate;
     }
     public void setExpirationDate(Date expirationDate) {
         this.expirationDate = expirationDate;

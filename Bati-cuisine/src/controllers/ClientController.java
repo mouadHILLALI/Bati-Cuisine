@@ -6,6 +6,8 @@ import services.ClientServices;
 import java.util.Scanner;
 
 public class ClientController {
+    private Client client = new Client();
+    private ProjectController projectController = new ProjectController(client);
     public void addClient(Scanner scanner) {
         try {
             System.out.println("Please enter the client name: ");
@@ -31,7 +33,10 @@ public class ClientController {
                 }
             } while (!professional.equals("y") && !professional.equals("n"));
 
-            Client client = new Client(name, address, phone, isProfessional);
+              client.setName(name);
+              client.setAddress(address);
+              client.setPhone(phone);
+              client.setProfessional(isProfessional);
             ClientServices clientServices = new ClientServices();
             boolean flag = clientServices.createClient(client);
             if (flag) {
@@ -40,8 +45,7 @@ public class ClientController {
                 String answer = scanner.nextLine().toLowerCase();
                 System.out.println(answer);
                 if (answer.equals("y")) {
-                    ProjectController projectController = new ProjectController();
-                    projectController.createProject(scanner,client);
+                    projectController.createProject(scanner);
                 } else if (answer.equals("n")) {
                     System.out.println("Returning to main menu...");
                 }

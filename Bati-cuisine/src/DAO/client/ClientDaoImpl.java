@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
 
 public class ClientDaoImpl implements DAO {
     @Override
@@ -64,4 +66,10 @@ public class ClientDaoImpl implements DAO {
     public <T> boolean find(T t) {
         return false;
     }
+
+    @Override
+    public <T> List<T> getAll(T t) {
+        return Collections.emptyList();
+    }
+
 }
