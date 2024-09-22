@@ -5,12 +5,11 @@ import java.util.Scanner;
 
 public class MenuController {
     private Scanner scanner;
-
+    private ProjectController projectController = new ProjectController();
     public MenuController() {
         this.scanner = new Scanner(System.in);
         mainMenu();
     }
-
     private void mainMenu() {
         while (true) {
             try {
@@ -20,9 +19,11 @@ public class MenuController {
                 switch (choice) {
                     case 1:
                         createProject();
+                        mainMenu();
                         break;
                     case 2:
-                        // Logic for showing existing projects
+                        projectController.displayProjects(scanner);
+                        mainMenu();
                         break;
                     case 3:
                         // Logic for calculating project cost
@@ -39,7 +40,6 @@ public class MenuController {
             }
         }
     }
-
     private void createProject() {
         try {
             System.out.println("Do you wish to search for an existing client or add a new project?\n1. Search for an existing client\n2. Add a new client\n0. Return to main menu");
@@ -64,7 +64,6 @@ public class MenuController {
             System.out.println("An error occurred: " + e.getMessage());
         }
     }
-
     private void searchExistingClient() {
         // Implement the logic for searching existing clients here
         System.out.println("Searching for existing clients...");

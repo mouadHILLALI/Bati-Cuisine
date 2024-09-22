@@ -1,17 +1,18 @@
 package controllers;
-
 import entity.Client;
 import entity.Project;
 import enums.ProjectStatusEnum;
-import repository.Project.ProjectRepositoryImpl;
 import services.ProjectServices;
 import java.util.Scanner;
 
 public class ProjectController {
+    private Client client ;
     final ProjectServices projectService = new ProjectServices();
-    private final Client client ;
     public ProjectController(Client client) {
         this.client = client;
+    }
+    public ProjectController(){
+
     }
     public void createProject(Scanner sc) {
         try {
@@ -54,7 +55,7 @@ public class ProjectController {
         }
     }
     public void continueProject(Scanner sc , Project project , Client client) {
-        final DevisController devisController = new DevisController(project, client);
+        final DevisController devisController = new DevisController(project, client , sc);
         try {
             System.out.println("Calculating total cost\n");
             System.out.println("do you wish to add Tax to the project?(y/n)\n");
@@ -81,17 +82,22 @@ public class ProjectController {
             throw new RuntimeException(e);
         }
     }
-//    public void updateProject(Scanner sc , boolean isExisiting) {
-//        try {
-//            if (isExisiting) {
-//                System.out.println("Enter the name of the project:");
-//                String name = sc.nextLine();
-//                System.out.println("Enter the Surface :");
-//                double surface = sc.nextDouble();
-//
-//            }
-//        } catch (RuntimeException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    public void displayProjects(Scanner sc){
+        try {
+            System.out.println("Show existing projects:\n1.projects with devis\n2.show all projects with associated client\n");
+            int userChoice = sc.nextInt();
+            do {
+                switch (userChoice){
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+                }
+            }while (userChoice < 1 || userChoice > 3);
+        }catch (RuntimeException e) {
+            System.out.println("An error occurred: " + e.getMessage());
+        }
+    }
 }

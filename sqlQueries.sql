@@ -34,4 +34,12 @@ CREATE TABLE labourers (
     productivityCoefficient DOUBLE PRECISION,
     projectID INT REFERENCES projects(id) ON DELETE CASCADE
 );
+CREATE TABLE devis (
+    id SERIAL PRIMARY KEY,
+    estimatedamount DOUBLE PRECISION,
+    emissiondate DATE,
+    expirationdate DATE,
+    isaccepted BOOLEAN DEFAULT FALSE,
+    projectID INT REFERENCES projects(id) ON DELETE CASCADE
+);
 

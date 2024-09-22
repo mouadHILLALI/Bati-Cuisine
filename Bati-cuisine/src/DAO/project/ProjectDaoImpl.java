@@ -113,6 +113,16 @@ public class ProjectDaoImpl implements ProjectDao {
     public <T> List<T> getAll(T t) {
         return Collections.emptyList();
     }
+    public <Project> List <Project> getAll(){
+        try {
+            DatabaseConnection db = new DatabaseConnection();
+            Connection connection = db.getConnection();
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM projects");
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return Collections.emptyList();
+    }
 
 
 }
