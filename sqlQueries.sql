@@ -42,4 +42,41 @@ CREATE TABLE devis (
     isaccepted BOOLEAN DEFAULT FALSE,
     projectID INT REFERENCES projects(id) ON DELETE CASCADE
 );
+SELECT 
+    projects.projectname, 
+    projects.surface, 
+    projects.projectstatus, 
+    clients.name, 
+    clients.address, 
+    clients.phone, 
+    devis.estimatedamount, 
+    devis.emissiondate, 
+    devis.expirationdate
+FROM 
+    projects
+INNER JOIN 
+    clients ON projects.clientid = clients.id
+INNER JOIN 
+    devis ON projects.id = devis.projectid;
 
+
+SELECT 
+project
+ +
+projects.project
+ +
+projects.sur
+ +
+projects.projectst
+ +
+clients.
+ +
+clients.add
+ +
+clients.p
+ +
+clients.isprofess
+,
+FROM pro
+ +
+INNER JOIN clients ON projects.clientid = clients.id

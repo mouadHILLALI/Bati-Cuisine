@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class ClientDaoImpl implements DAO {
     @Override
@@ -25,15 +26,12 @@ public class ClientDaoImpl implements DAO {
                 String SQL = "INSERT INTO clients (name, address, phone, isProfessional) VALUES (?, ?, ?, ?)";
                 try (PreparedStatement preparedStatement = connection.prepareStatement(SQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-                    // Set parameters
                     preparedStatement.setString(1, client.getName());
                     preparedStatement.setString(2, client.getAddress());
                     preparedStatement.setString(3, client.getPhone());
                     preparedStatement.setBoolean(4, client.isProfessional());
-
                     // Execute the query
                     int rowsAffected = preparedStatement.executeUpdate();
-
                     // If a row was inserted, retrieve the generated ID
                     if (rowsAffected > 0) {
                         try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
@@ -50,8 +48,30 @@ public class ClientDaoImpl implements DAO {
         }
         return false; // Return false if the object is not a Client or if an error occurred
     }
-
-
+    public Optional<Client> find(String name) {
+        Optional<Client> client = Optional.empty(); // Initialize as empty Optional
+        try {
+            DatabaseConnection databaseConnection = new DatabaseConnection();
+            Connection connection = databaseConnection.getConnection();
+            String sql = "SELECT * FROM clients WHERE name = ? OR name LIKE ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, "%" + name + "%");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                Client foundClient = new Client();
+                foundClient.setId(resultSet.getInt("id"));
+                foundClient.setName(resultSet.getString("name"));
+                foundClient.setAddress(resultSet.getString("address"));
+                foundClient.setPhone(resultSet.getString("phone"));
+                foundClient.setProfessional(resultSet.getBoolean("isprofessional"));
+                client = Optional.of(foundClient);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return client;
+    }
     @Override
     public <T> boolean update(T t) {
         return false;

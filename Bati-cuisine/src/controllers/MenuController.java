@@ -53,7 +53,7 @@ public class MenuController {
                     ClientController clientController = new ClientController();
                     clientController.addClient(scanner);
                 case 0:
-                    return; // Go back to main menu
+                    return;
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
@@ -65,9 +65,8 @@ public class MenuController {
         }
     }
     private void searchExistingClient() {
-        // Implement the logic for searching existing clients here
-        System.out.println("Searching for existing clients...");
-        // ...
+       ClientController clientController = new ClientController();
+       clientController.find(scanner);
     }
 
 }

@@ -6,6 +6,7 @@ import services.ClientServices;
 import java.util.Scanner;
 
 public class ClientController {
+    final  ClientServices clientServices = new ClientServices();
     private Client client = new Client();
     private ProjectController projectController = new ProjectController(client);
     public void addClient(Scanner scanner) {
@@ -32,12 +33,11 @@ public class ClientController {
                         System.out.println("Please enter 'y' for Yes or 'n' for No.");
                 }
             } while (!professional.equals("y") && !professional.equals("n"));
-
               client.setName(name);
               client.setAddress(address);
               client.setPhone(phone);
               client.setProfessional(isProfessional);
-            ClientServices clientServices = new ClientServices();
+
             boolean flag = clientServices.createClient(client);
             if (flag) {
                 System.out.println("Client added successfully!\n");
@@ -45,7 +45,7 @@ public class ClientController {
                 String answer = scanner.nextLine().toLowerCase();
                 System.out.println(answer);
                 if (answer.equals("y")) {
-                    projectController.createProject(scanner);
+                    projectController.createProject(scanner ,client);
                 } else if (answer.equals("n")) {
                     System.out.println("Returning to main menu...");
                 }
@@ -59,5 +59,33 @@ public class ClientController {
         }
 
     }
-
+    public void find(Scanner scanner) {
+        try {
+            System.out.println("Please enter the client name: ");
+            String name = scanner.nextLine().toLowerCase();
+            client =  clientServices.find(name);
+            if (client == null) {
+                System.out.println("Client not found!\nDo you wish to add this client ? (y/n)\n");
+                String answer = scanner.nextLine().toLowerCase();
+                if (answer.equals("y")) {
+                    addClient(scanner);
+                }else if (answer.equals("n")) {
+                    System.out.println("Returning to main menu...");
+                }
+            }else {
+                System.out.println("Client found!");
+                System.out.println("Client ID\t Client Name\t Client Address\t Client Phone\t Client Professional");
+                System.out.println(client.getId() + client.getName() + client.getAddress() + client.getPhone() + (client.isProfessional()? "Yes" : "No" ));
+                System.out.println("Do you wish to add a project to this client? (y/n)\n");
+                String answer = scanner.nextLine().toLowerCase();
+                if (answer.equals("y")) {
+                    projectController.createProject(scanner , client);
+                }else if (answer.equals("n")) {
+                    System.out.println("Returning to main menu...");
+                }
+            }
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

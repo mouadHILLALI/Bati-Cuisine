@@ -1,13 +1,18 @@
 package DAO.project;
 
 import configuration.DatabaseConnection;
+import entity.Client;
+import entity.Devis;
 import entity.Project;
+import enums.ProjectStatusEnum;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class ProjectDaoImpl implements ProjectDao {
@@ -113,16 +118,112 @@ public class ProjectDaoImpl implements ProjectDao {
     public <T> List<T> getAll(T t) {
         return Collections.emptyList();
     }
-    public <Project> List <Project> getAll(){
+    public HashMap<Integer, Project> getAll() {
+        HashMap<Integer, Project> projectMap = new HashMap<>();
         try {
             DatabaseConnection db = new DatabaseConnection();
             Connection connection = db.getConnection();
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM projects");
-        }catch (SQLException e){
+            String query = "SELECT " +
+                    "projects.id, " +
+                    "projects.projectname, " +
+                    "projects.surface, " +
+                    "projects.projectstatus, " +
+                    "clients.name, " +
+                    "clients.address, " +
+                    "clients.phone, " +
+                    "clients.isprofessional, " + // Add missing comma
+                    "devis.estimatedamount, " +
+                    "devis.emissiondate, " +
+                    "devis.expirationdate, " + // Add missing comma
+                    "devis.isaccepted " +
+                    "FROM projects " +
+                    "INNER JOIN clients ON projects.clientid = clients.id " +
+                    "INNER JOIN devis ON projects.id = devis.projectid";
+
+            PreparedStatement ps = connection.prepareStatement(query);
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()) {
+                int projectId = resultSet.getInt("id");
+                String projectName = resultSet.getString("projectname");
+                double surface = resultSet.getDouble("surface");
+                String status = resultSet.getString("projectstatus");
+
+                // Create Client object
+                Client client = new Client(
+                        resultSet.getString("name"),
+                        resultSet.getString("address"),
+                        resultSet.getString("phone"),
+                        resultSet.getBoolean("isprofessional")
+                );
+
+                // Create Devis object
+                Devis devis = new Devis(
+                        resultSet.getDouble("estimatedamount"),
+                        resultSet.getDate("emissiondate"),
+                        resultSet.getDate("expirationdate"),
+                        resultSet.getBoolean("isaccepted")
+                );
+
+                // Convert status string to ProjectStatusEnum
+                ProjectStatusEnum projectStatus = ProjectStatusEnum.valueOf(status.toUpperCase());
+                // Create Project object and add to the map
+                Project project = new Project(projectName, surface, projectStatus, client, devis);
+                projectMap.put(projectId, project);
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        return Collections.emptyList();
+        return projectMap;
     }
 
+    public List<Project> getAllProjects() {
+        List<Project> projectList = new ArrayList<>();
+        try {
+            DatabaseConnection db = new DatabaseConnection();
+            Connection connection = db.getConnection();
+
+            // Corrected SQL query: removed the extra comma before 'FROM'
+            String query = "SELECT " +
+                    "projects.id, " +
+                    "projects.projectname, " +
+                    "projects.surface, " +
+                    "projects.projectstatus, " +
+                    "clients.name, " +
+                    "clients.address, " +
+                    "clients.phone, " +
+                    "clients.isprofessional " + // Corrected comma here
+                    "FROM projects " +
+                    "INNER JOIN clients ON projects.clientid = clients.id";
+
+            PreparedStatement ps = connection.prepareStatement(query);
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()) {
+                int projectId = resultSet.getInt("id");
+                String projectName = resultSet.getString("projectname");
+                double surface = resultSet.getDouble("surface");
+                String status = resultSet.getString("projectstatus");
+
+                Client client = new Client(
+                        resultSet.getString("name"),
+                        resultSet.getString("address"),
+                        resultSet.getString("phone"),
+                        resultSet.getBoolean("isprofessional")
+                );
+
+                // Convert status string to ProjectStatusEnum
+                ProjectStatusEnum projectStatus = ProjectStatusEnum.valueOf(status.toUpperCase());
+
+                // Create Project object and add to the list
+                Project project = new Project(projectName, surface, projectStatus, client);
+                project.setId(projectId);
+                projectList.add(project); // Add to the list without specifying index
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return projectList; // Return the list of projects
+    }
 
 }
