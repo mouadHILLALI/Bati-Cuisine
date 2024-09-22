@@ -1,4 +1,3 @@
-import configuration.DatabaseConnection;
 import controllers.MenuController;
 
 public class Main {

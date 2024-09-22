@@ -1,4 +1,5 @@
 package controllers;
+import entity.Client;
 import entity.Labourer;
 import entity.Project;
 import repository.Labourer.LabourerRepositoryImpl;
@@ -9,12 +10,16 @@ import java.util.List;
 import java.util.Scanner;
 
 public class LabourerController {
+    private Client client ;
+    public LabourerController(Client client) {
+        this.client = client;
+    }
+    final ProjectController projectController = new ProjectController(client);
     public void addLabourer(Scanner sc, Project project) {
         try {
             System.out.println("Do you wish to add labourers to the project " + project.getProjectName() + "? (y/n)");
             String answer = sc.nextLine().toLowerCase();
             List<Labourer> labourers = new ArrayList<>();
-
             if (answer.equals("y")) {
                 boolean continueAdding = true;
                 while (continueAdding) {
@@ -44,9 +49,12 @@ public class LabourerController {
                 boolean check = labourerRepository.addLabourer(labourers, projectID);
                 if (check) {
                     System.out.println("labourer added successfully.");
+                    projectController.continueProject(sc, project , client);
                 } else {
                     System.out.println("Failed to add labourer.");
                 }
+            }else{
+                projectController.continueProject(sc, project , client);
             }
         } catch (InputMismatchException e) {
             System.out.println("Invalid input: " + e.getMessage());
