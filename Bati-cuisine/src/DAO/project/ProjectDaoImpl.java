@@ -5,7 +5,6 @@ import entity.Client;
 import entity.Devis;
 import entity.Project;
 import enums.ProjectStatusEnum;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

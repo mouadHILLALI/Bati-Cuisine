@@ -53,13 +53,14 @@ public class MenuController {
                     ClientController clientController = new ClientController();
                     clientController.addClient(scanner);
                 case 0:
+                    mainMenu();
                     return;
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
         } catch (InputMismatchException e) {
             System.out.println("Invalid input. Please enter a number.");
-            scanner.nextLine(); // Clear the invalid input
+            scanner.nextLine();
         } catch (RuntimeException e) {
             System.out.println("An error occurred: " + e.getMessage());
         }

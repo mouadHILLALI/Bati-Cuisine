@@ -33,9 +33,6 @@ public class MaterialController {
                     System.out.println("Enter material quantity:");
                     double quantity = scanner.nextDouble();
 
-                    System.out.println("Enter material tax:");
-                    double tax = scanner.nextDouble();
-
                     System.out.println("Enter material transportation cost:");
                     double transportCost = scanner.nextDouble();
 
@@ -44,7 +41,7 @@ public class MaterialController {
                     // Clear the buffer after nextDouble()
                     scanner.nextLine();
                     // Create material and add to the list
-                    Material material = new Material(materialName, unitCost, quantity, tax, transportCost, qualityCoeff);
+                    Material material = new Material(materialName, unitCost, quantity,  transportCost, qualityCoeff);
                     materials.add(material);
                     System.out.println("Do you wish to add another material? (y/n)");
                     answer = scanner.nextLine().toLowerCase();

@@ -29,14 +29,10 @@ public class LabourerController {
                     double hourlyRate = sc.nextDouble();
                     System.out.println("Enter labourer total hours:");
                     double totalHours = sc.nextDouble();
-                    System.out.println("Enter labourer tax:");
-                    double tax = sc.nextDouble();
                     System.out.println("Enter labourer productivity coefficient (1.0 = standard, > 1.0 = high quality):");
                     double productivityCoeff = sc.nextDouble();
-                    // Clear the buffer after nextDouble()
                     sc.nextLine();
-                    // Create material and add to the list
-                    Labourer labourer = new Labourer(speciality, hourlyRate, totalHours, tax, productivityCoeff);
+                    Labourer labourer = new Labourer(speciality, hourlyRate, totalHours,  productivityCoeff);
                     labourers.add(labourer);
                     System.out.println("Do you wish to add another labourer? (y/n)");
                     answer = sc.nextLine().toLowerCase();
@@ -58,7 +54,7 @@ public class LabourerController {
             }
         } catch (InputMismatchException e) {
             System.out.println("Invalid input: " + e.getMessage());
-            sc.nextLine(); // Clear the scanner buffer after invalid input
+            sc.nextLine();
         }
     }
 }

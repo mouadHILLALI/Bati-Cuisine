@@ -1,40 +1,37 @@
 package entity;
 
-public class Labourer {
-    private int id;
-    private String specialty;
+public class Labourer extends Component {
     private double hourlyRate;
     private double totalHours;
-    private double taxRate;
     private double productivityCoefficient;
-    public Labourer(int id , String specialty , double hourlyRate , double totalHours , double taxRate , double productivityCoefficient) {
-        this.id = id;
-        this.specialty = specialty;
+    public Labourer( int id , String name , double hourlyRate , double totalHours , double productivityCoefficient) {
+        super(id, name);
         this.hourlyRate = hourlyRate;
         this.totalHours = totalHours;
-        this.taxRate = taxRate;
         this.productivityCoefficient = productivityCoefficient;
     }
-    public Labourer( String specialty , double hourlyRate , double totalHours , double taxRate , double productivityCoefficient) {
-        this.specialty = specialty;
+    public Labourer( String Name , double hourlyRate , double totalHours ,  double productivityCoefficient) {
+        super(0 , Name);
         this.hourlyRate = hourlyRate;
         this.totalHours = totalHours;
-        this.taxRate = taxRate;
         this.productivityCoefficient = productivityCoefficient;
     }
-    public Labourer(){
+
+    public Labourer() {
+        super(0 , "Labourer");
     }
+
     public int getId() {
         return id;
     }
     public void setId(int id) {
         this.id = id;
     }
-    public String getSpecialty() {
-        return specialty;
+    public String getName() {
+        return name;
     }
-    public void setSpecialty(String specialty) {
-        this.specialty = specialty;
+    public void setName(String name) {
+        this.name = name;
     }
     public double getHourlyRate() {
         return hourlyRate;
@@ -47,12 +44,6 @@ public class Labourer {
     }
     public void setTotalHours(double totalHours) {
         this.totalHours = totalHours;
-    }
-    public double getTaxRate() {
-        return taxRate;
-    }
-    public void setTaxRate(double taxRate) {
-        this.taxRate = taxRate;
     }
     public double getProductivityCoefficient() {
         return productivityCoefficient;

@@ -20,7 +20,6 @@ public class ProjectController {
     }
     public void createProject(Scanner sc , Client client) {
         try {
-            System.out.println(client.getName()+client.getPhone());
             ProjectStatusEnum projectStatus = ProjectStatusEnum.PENDING;
             System.out.println("Enter the name of the project:");
             String name = sc.nextLine();

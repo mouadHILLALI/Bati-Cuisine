@@ -22,15 +22,14 @@ public class LabourerDaoImpl implements LabourerDao {
         try {
             DatabaseConnection db = new DatabaseConnection();
             conn = db.getConnection();
-            String query = "INSERT INTO labourers(specialty, hourlyrate, totalhours, taxrate, productivitycoefficient, projectid) VALUES (?,?,?,?,?,?)";
+            String query = "INSERT INTO laboures(name, hourlyrate, totalhours, productivitycoefficient, projectid) VALUES (?,?,?,?,?)";
             ps = conn.prepareStatement(query);
             // Set the parameters for the labourer
-            ps.setString(1, labourer.getSpecialty());
+            ps.setString(1, labourer.getName());
             ps.setDouble(2, labourer.getHourlyRate());
             ps.setDouble(3, labourer.getTotalHours());
-            ps.setDouble(4, labourer.getTaxRate());
-            ps.setDouble(5, labourer.getProductivityCoefficient());
-            ps.setInt(6, projectID);
+            ps.setDouble(4, labourer.getProductivityCoefficient());
+            ps.setInt(5, projectID);
             // Execute the query and return true if a row is inserted
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
@@ -70,7 +69,7 @@ public class LabourerDaoImpl implements LabourerDao {
         try {
             DatabaseConnection db = new DatabaseConnection();
             Connection conn = db.getConnection();
-            String query = "SELECT * FROM labourers WHERE projectid=?";
+            String query = "SELECT * FROM laboures WHERE projectid=?";
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, project.getId());
             ResultSet rs = ps.executeQuery();
@@ -78,10 +77,9 @@ public class LabourerDaoImpl implements LabourerDao {
             // Loop through the result set and populate the list with Labourer objects
             while (rs.next()) {
                 Labourer labourer = new Labourer();
-                labourer.setSpecialty(rs.getString("specialty"));
+                labourer.setName(rs.getString("name"));
                 labourer.setHourlyRate(rs.getDouble("hourlyrate"));
                 labourer.setTotalHours(rs.getDouble("totalhours"));
-                labourer.setTaxRate(rs.getDouble("taxrate"));
                 labourer.setProductivityCoefficient(rs.getDouble("productivitycoefficient"));
                 labourers.add(labourer);
             }

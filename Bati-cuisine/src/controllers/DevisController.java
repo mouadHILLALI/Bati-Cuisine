@@ -5,6 +5,7 @@ import entity.*;
 import repository.Labourer.LabourerRepositoryImpl;
 import services.DevisServices;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -15,10 +16,10 @@ import java.util.Scanner;
 public class DevisController {
     private Project project;
     private Client client;
-    private double materialTotalCostWithoutTax = 0.0 ;
-    private double materialTotalCostWithTax = 0;
-    private double labourerTotalCostWithoutTax = 0.0 ;
-    private double labourerTotalCostWithTax = 0;
+    private double materialTotalCost = 0.0 ;
+    private double materialsTotalCost = 0.0 ;
+    private double labourerTotalCost = 0.0 ;
+    private double labourersTotalCost = 0.0 ;
     private double totalCost = 0.0 ;
     private Scanner scanner;
     final MaterialDaoImpl materialDao = new MaterialDaoImpl();
@@ -37,7 +38,6 @@ public class DevisController {
             calculateMaterialsCost();
             calculateLabourersCost();
             calculateDevisTotal();
-            registerDevis();
         } catch (RuntimeException e) {
             System.out.println(e.getMessage());
             throw new RuntimeException(e);
@@ -48,12 +48,11 @@ public class DevisController {
           List<Material> materials = materialDao.getAll(project);
           System.out.println("Total Materials: " + materials.size() + "\n");
           for (Material material : materials) {
-              materialTotalCostWithoutTax = (material.getUnitCost()*material.getQuantity()*material.getQualityCoefficient()) + material.getTransportCost();
-              System.out.println("Material Name: " + material.getName()+ " " + materialTotalCostWithoutTax + "(quantity: "+material.getQuantity()+", unit cost :" + material.getUnitCost()+ ",quality :" + material.getQualityCoefficient()+"transport :"+material.getTransportCost()+")\n" );
-              materialTotalCostWithTax += materialTotalCostWithoutTax ;
+              materialTotalCost = (material.getUnitCost()*material.getQuantity()*material.getQualityCoefficient()) + material.getTransportCost();
+              System.out.println("Material Name: " + material.getName()+ " " + materialTotalCost + "(quantity: "+material.getQuantity()+", unit cost :" + material.getUnitCost()+ ",quality :" + material.getQualityCoefficient()+"transport :"+material.getTransportCost()+")\n" );
+              materialsTotalCost += materialTotalCost ;
           }
-          System.out.println("Materials Total Cost without tax:" + materialTotalCostWithTax + "\n");
-          System.out.println("Materials Total Cost with taxes: " + (materialTotalCostWithTax + (materialTotalCostWithTax * (project.getTaxRate()/100))) + "\n");
+          System.out.println("Materials Total Cost :" + materialsTotalCost + "\n");
         }catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -63,71 +62,87 @@ public class DevisController {
         List<Labourer> labourers = labourerRepository.getLabourers(project);
         try {
             System.out.println("Labourers :\n");
-            System.out.println("Total Materials: " + labourers.size() + "\n");
+            System.out.println("Total Labourers: " + labourers.size() + "\n");
             for (Labourer labourer : labourers) {
-                labourerTotalCostWithoutTax = (labourer.getHourlyRate()*labourer.getTotalHours()*labourer.getProductivityCoefficient());
-                System.out.println("Labourer specialty: " + labourer.getSpecialty()+ " " + labourerTotalCostWithoutTax + "(quantity: "+labourer.getTotalHours()+ ", unit cost : " + labourer.getHourlyRate()+ " ,quality : " + labourer.getProductivityCoefficient()+" transport :"+")\n" );
-                labourerTotalCostWithTax += labourerTotalCostWithoutTax ;
+                labourerTotalCost = (labourer.getHourlyRate()*labourer.getTotalHours()*labourer.getProductivityCoefficient());
+                System.out.println("Labourer specialty: " + labourer.getName()+ " " + labourerTotalCost + "(quantity: "+labourer.getTotalHours()+ ", unit cost : " + labourer.getHourlyRate()+ " ,quality : " + labourer.getProductivityCoefficient()+""+")\n" );
+                labourersTotalCost += labourerTotalCost;
             }
-            System.out.println("Labourers Total Cost without tax: " + labourerTotalCostWithoutTax + "\n");
-            System.out.println("Labourers Total Cost with taxes: " + (labourerTotalCostWithTax + (labourerTotalCostWithTax * (project.getTaxRate()/100))) + "\n");
+            System.out.println("Labourers Total Cost: " + labourersTotalCost + "\n");
         }catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
     }
     public void calculateDevisTotal(){
         try {
-            System.out.println("Total cost without beneficial margin: " + (labourerTotalCostWithTax+materialTotalCostWithTax) + "DH \n");
-            System.out.println("beneficial margin: " + ((labourerTotalCostWithTax+materialTotalCostWithTax)*(project.getBeneficialMargin()/100))+ "DH \n");
-            System.out.println("Total cost with beneficial margin: ("+ project.getBeneficialMargin()+"%)" + (labourerTotalCostWithTax+materialTotalCostWithTax) +
-                    ((labourerTotalCostWithTax+materialTotalCostWithTax)*(project.getBeneficialMargin()/100))+ "DH \n");
-            totalCost =  (labourerTotalCostWithTax+materialTotalCostWithTax) + ((labourerTotalCostWithTax+materialTotalCostWithTax)*(project.getBeneficialMargin()/100));
+            System.out.println("Total cost without beneficial margin: " + (labourerTotalCost+materialsTotalCost) + "DH \n");
+            System.out.println("beneficial margin: " + ((labourerTotalCost+materialsTotalCost)*(project.getBeneficialMargin()/100))+ "DH \n");
+            System.out.println("Total cost with beneficial margin: ("+ project.getBeneficialMargin()+"%)" + (labourerTotalCost+materialsTotalCost) +
+                    ((labourerTotalCost+materialsTotalCost)*(project.getBeneficialMargin()/100))+ "DH \n");
+            totalCost =  (labourerTotalCost+materialsTotalCost) + ((labourerTotalCost+materialsTotalCost)*(project.getBeneficialMargin()/100));
+            System.out.println("Project total cost without tax:" + totalCost + "\n");
+            System.out.println("Project total cost with taxes :" + totalCost +(totalCost*(project.getTaxRate())/100) + "\n");
+            registerDevis(totalCost , scanner);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
     }
-    public void registerDevis() {
-        try {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("----Saving the Devis----\n");
-            System.out.println("Enter the emission date (dd/MM/yyyy):\n");
-            String emissionDateInput = scanner.nextLine();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            LocalDate emissionLocalDate = LocalDate.parse(emissionDateInput, formatter);
-            Date emissionDate = java.sql.Date.valueOf(emissionLocalDate);
-            LocalDate currentDate = LocalDate.now();
-            if (emissionLocalDate.isBefore(currentDate)) {
-                System.out.println("Emission date cannot be before the current date. Please enter a valid date.");
-                registerDevis();
-                return;
+    public void registerDevis(double totalCost, Scanner scanner) {
+        System.out.println("----Saving the Devis----\n");
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate emissionLocalDate = null;
+        LocalDate expirationLocalDate = null;
+        while (emissionLocalDate == null) {
+            try {
+                System.out.println("Enter the emission date (dd/MM/yyyy):\n");
+                String emissionDateInput = scanner.nextLine();
+                emissionLocalDate = LocalDate.parse(emissionDateInput, formatter);
+
+                if (emissionLocalDate.isBefore(LocalDate.now())) {
+                    System.out.println("Emission date cannot be before the current date. Please enter a valid date.");
+                    emissionLocalDate = null;
+                }
+            } catch (DateTimeException e) {
+                System.out.println("Invalid date format. Please enter a valid date in the format dd/MM/yyyy.");
             }
-            System.out.println("Enter the expiration date (dd/MM/yyyy):\n");
-            String expirationDateInput = scanner.nextLine();
-            LocalDate expirationLocalDate = LocalDate.parse(expirationDateInput, formatter);
-            Date expirationDate = java.sql.Date.valueOf(expirationLocalDate);
-            if (expirationLocalDate.isBefore(emissionLocalDate)) {
-                System.out.println("Expiration date cannot be before the emission date. Please enter a valid date.");
-                registerDevis();
-                return;
+        }
+
+        // Loop for valid expiration date input
+        while (expirationLocalDate == null) {
+            try {
+                System.out.println("Enter the expiration date (dd/MM/yyyy):\n");
+                String expirationDateInput = scanner.nextLine();
+                expirationLocalDate = LocalDate.parse(expirationDateInput, formatter);
+
+                if (expirationLocalDate.isBefore(emissionLocalDate)) {
+                    System.out.println("Expiration date cannot be before the emission date. Please enter a valid date.");
+                    expirationLocalDate = null;
+                }
+            } catch (DateTimeException e) {
+                System.out.println("Invalid date format. Please enter a valid date in the format dd/MM/yyyy.");
             }
-            System.out.println("Emission date: " + emissionDate);
-            System.out.println("Expiration date: " + expirationDate);
-            boolean isAccepted = false;
-            Devis devis = new Devis(totalCost, emissionDate, expirationDate, isAccepted);
-            DevisServices devisServices = new DevisServices();
-            boolean flag = devisServices.saveDevis(devis, project);
-            if (flag) {
-                System.out.println("Devis successfully registered.");
-            } else {
-                System.out.println("Devis could not be registered.");
+        }
+        Date emissionDate = java.sql.Date.valueOf(emissionLocalDate);
+        Date expirationDate = java.sql.Date.valueOf(expirationLocalDate);
+        if (client.isProfessional()){
+            System.out.println(client.getName() + " is a professional do you wish to grant him a reduction ?(y/n)");
+            String answer = scanner.nextLine();
+            if (answer.equals("y")){
+                System.out.println("reduction is (10%) :" + totalCost/0.9 + "DH");
+                totalCost = totalCost * 0.9;
+                System.out.println("new total Cost is:" + totalCost + "DH");
             }
-        } catch (InputMismatchException e) {
-            System.out.println("Invalid input. Please enter the date in the correct format.");
-            e.printStackTrace();
+        }
+        boolean isAccepted = false;
+        Devis devis = new Devis(totalCost, emissionDate, expirationDate, isAccepted);
+        DevisServices devisServices = new DevisServices();
+        boolean flag = devisServices.saveDevis(devis, project);
+        if (flag) {
+            System.out.println("Devis successfully registered.");
+        } else {
+            System.out.println("Devis could not be registered.");
         }
     }
-
-
-
 
 }

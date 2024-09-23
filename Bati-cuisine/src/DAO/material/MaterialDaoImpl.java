@@ -17,15 +17,14 @@ public class MaterialDaoImpl implements MaterialDao  {
     try {
         DatabaseConnection databaseConnection = new DatabaseConnection();
         Connection connection = databaseConnection.getConnection();
-        String sql = "insert into materials(materialname, unitcost,quantity,tax,transcost,qualitycoeff,projectid) values(?,?,?,?,?,?,?)";
+        String sql = "insert into materials(name, unitcost,quantity,transcost,qualitycoeff,projectid) values(?,?,?,?,?,?)";
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, material.getName());
         preparedStatement.setDouble(2, material.getUnitCost());
         preparedStatement.setDouble(3, material.getQuantity());
-        preparedStatement.setDouble(4, material.getTaxRate());
-        preparedStatement.setDouble(5, material.getTransportCost());
-        preparedStatement.setDouble(6, material.getQualityCoefficient());
-        preparedStatement.setInt(7, projectID);
+        preparedStatement.setDouble(4, material.getTransportCost());
+        preparedStatement.setDouble(5, material.getQualityCoefficient());
+        preparedStatement.setInt(6, projectID);
         int rowsAffected = preparedStatement.executeUpdate();
         return rowsAffected > 0;
     }catch (SQLException e){
@@ -47,14 +46,13 @@ public class MaterialDaoImpl implements MaterialDao  {
 
                 // Iterate through the result set and create Material objects
                 while (rs.next()) {
-                    String name = rs.getString("materialname");
+                    String name = rs.getString("name");
                     double unitCost = rs.getDouble("unitcost");
                     double quantity = rs.getDouble("quantity");
-                    double taxRate = rs.getDouble("tax");
                     double transportCost = rs.getDouble("transcost");
                     double qualityCoeff = rs.getDouble("qualitycoeff");
                     // Create a new Material object and add it to the list
-                    Material material = new Material(name, unitCost, quantity, taxRate, transportCost, qualityCoeff);
+                    Material material = new Material(name, unitCost, quantity,  transportCost, qualityCoeff);
                     materials.add(material);
                 }
             } catch (SQLException e) {

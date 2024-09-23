@@ -2,6 +2,8 @@ package services;
 import entity.Client;
 import repository.Client.ClientRepositoryImpl;
 
+import java.util.Optional;
+
 public class ClientServices {
     final ClientRepositoryImpl clientRepository = new ClientRepositoryImpl();
     public boolean createClient(Client client) {
@@ -19,12 +21,8 @@ public class ClientServices {
             throw e;
         }
     }
-    public Client find(String name){
-        try {
-            return clientRepository.find(name);
-        }catch (RuntimeException e) {
-        System.err.println("Error finding client: " + e.getMessage());
-        throw e;
-        }
+    public Client find(String name) {
+       Client client = clientRepository.find(name);
+       return client;
     }
 }

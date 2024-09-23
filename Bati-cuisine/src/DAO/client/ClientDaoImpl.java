@@ -46,10 +46,10 @@ public class ClientDaoImpl implements DAO {
                 e.printStackTrace();
             }
         }
-        return false; // Return false if the object is not a Client or if an error occurred
+        return false;
     }
-    public Optional<Client> find(String name) {
-        Optional<Client> client = Optional.empty(); // Initialize as empty Optional
+    public Client find(String name) {
+        Client client = null;
         try {
             DatabaseConnection databaseConnection = new DatabaseConnection();
             Connection connection = databaseConnection.getConnection();
@@ -59,19 +59,19 @@ public class ClientDaoImpl implements DAO {
             preparedStatement.setString(2, "%" + name + "%");
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                Client foundClient = new Client();
-                foundClient.setId(resultSet.getInt("id"));
-                foundClient.setName(resultSet.getString("name"));
-                foundClient.setAddress(resultSet.getString("address"));
-                foundClient.setPhone(resultSet.getString("phone"));
-                foundClient.setProfessional(resultSet.getBoolean("isprofessional"));
-                client = Optional.of(foundClient);
+                client = new Client();
+                client.setId(resultSet.getInt("id"));
+                client.setName(resultSet.getString("name"));
+                client.setAddress(resultSet.getString("address"));
+                client.setPhone(resultSet.getString("phone"));
+                client.setProfessional(resultSet.getBoolean("isprofessional"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return client;
     }
+
     @Override
     public <T> boolean update(T t) {
         return false;
