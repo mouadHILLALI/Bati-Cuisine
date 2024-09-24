@@ -43,18 +43,20 @@ public class InputValidator implements ValidatorInterface {
         }
     }
     public double ValidateDouble(String prompt) {
-        try {
-         System.out.println(prompt);
-         double number = scanner.nextDouble();
-         boolean isValid = isDoubleValid().test(number);
-         if (!isValid) {
-             System.out.println(number + " is not a valid input. Please enter again:");
-             return ValidateDouble(prompt);
-         }
-         return number;
-        }catch (InputMismatchException e) {
-            System.out.println(prompt);
-            return ValidateDouble(prompt);
+        while (true) {
+            try {
+                System.out.println(prompt);
+                double number = scanner.nextDouble();
+                boolean isValid = isDoubleValid().test(number);
+                if (!isValid) {
+                    System.out.println(number + " is not a valid input. Please enter again:");
+                } else {
+                    return number;
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a valid double value.");
+                scanner.nextLine();
+            }
         }
     }
     public String ValidatePrompt(String prompt) {
@@ -104,8 +106,14 @@ public class InputValidator implements ValidatorInterface {
     }
     @Override
     public Predicate<Double> isDoubleValid() {
-        return input -> input > 0;
+        return input -> {
+            if (input instanceof Double) {
+                return (Double) input > 0;
+            }
+            return false;
+        };
     }
+
     public Predicate<String> isPhoneValid() {
         return phone -> phone.matches(phoneRegex);
     }
