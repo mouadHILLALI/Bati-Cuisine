@@ -36,7 +36,7 @@ public class MenuController {
                 }
             } catch (RuntimeException e) {
                 System.out.println("An error occurred: " + e.getMessage());
-                scanner.nextLine(); // Clear the scanner buffer
+                scanner.nextLine();
             }
         }
     }
@@ -44,14 +44,14 @@ public class MenuController {
         try {
             System.out.println("Do you wish to search for an existing client or add a new project?\n1. Search for an existing client\n2. Add a new client\n0. Return to main menu");
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Clear the buffer after reading an integer
+            scanner.nextLine();
             switch (choice) {
                 case 1:
                     searchExistingClient();
                     break;
                 case 2:
-                    ClientController clientController = new ClientController();
-                    clientController.addClient(scanner);
+                    ClientController clientController = new ClientController(scanner);
+                    clientController.addClient();
                 case 0:
                     mainMenu();
                     return;
@@ -66,8 +66,8 @@ public class MenuController {
         }
     }
     private void searchExistingClient() {
-       ClientController clientController = new ClientController();
-       clientController.find(scanner);
+       ClientController clientController = new ClientController(scanner);
+       clientController.find();
     }
 
 }

@@ -15,25 +15,27 @@ CREATE TABLE projects (
     taxRate DOUBLE PRECISION,
     clientID INT REFERENCES clients(id) ON DELETE CASCADE
 );
+create table "components"(
+ id SERIAL PRIMARY KEY,
+name varchar(255) not null
+)
 CREATE TABLE materials (
-    id SERIAL PRIMARY KEY,
-    materialName VARCHAR(255) NOT NULL,
-    unitCost double PRECISION,
+ unitCost double PRECISION,
     quantity double PRECISION,
     tax DOUBLE PRECISION,
     transCost DOUBLE PRECISION,
     qualityCoeff DOUBLE PRECISION,
     projectID INT REFERENCES projects(id) ON DELETE CASCADE
-);
-CREATE TABLE labourers (
-    id SERIAL PRIMARY KEY,
-    specialty VARCHAR(255) NOT NULL,
-    hourlyRate double PRECISION,
-    totalHours double PRECISION,
-    taxRate DOUBLE PRECISION,
-    productivityCoefficient DOUBLE PRECISION,
-    projectID INT REFERENCES projects(id) ON DELETE CASCADE
-);
+) INHERITS (components);
+
+CREATE TABLE laboures (
+  hourlyRate DOUBLE PRECISION,
+  totalHours DOUBLE PRECISION,
+  taxRate DOUBLE PRECISION,
+  productivityCoefficient DOUBLE PRECISION,
+  projectID INT REFERENCES projects(id) ON DELETE CASCADE
+) INHERITS (components);
+
 CREATE TABLE devis (
     id SERIAL PRIMARY KEY,
     estimatedamount DOUBLE PRECISION,
@@ -60,23 +62,17 @@ INNER JOIN
     devis ON projects.id = devis.projectid;
 
 
-SELECT 
-project
- +
-projects.project
- +
-projects.sur
- +
-projects.projectst
- +
-clients.
- +
-clients.add
- +
-clients.p
- +
-clients.isprofess
+SELECT  
+projects.projectname
+ ,
+projects.surface
+ ,
+projects.projecost
+ ,
+clients.name
 ,
-FROM pro
- +
+clients.address
+ ,
+clients.isprofessional
+FROM projects 
 INNER JOIN clients ON projects.clientid = clients.id

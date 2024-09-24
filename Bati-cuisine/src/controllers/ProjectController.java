@@ -1,4 +1,5 @@
 package controllers;
+import Helpers.InputValidator;
 import entity.Client;
 import entity.Devis;
 import entity.Project;
@@ -20,29 +21,10 @@ public class ProjectController {
     }
     public void createProject(Scanner sc , Client client) {
         try {
+            InputValidator inputValidator = new InputValidator(sc);
             ProjectStatusEnum projectStatus = ProjectStatusEnum.PENDING;
-            System.out.println("Enter the name of the project:");
-            String name = sc.nextLine();
-            System.out.println("Enter the " + name + " surface (m²):");
-            double surface = sc.nextDouble();
-            int status;
-            do {
-                System.out.println("Enter the " + name + " project status:\n1. Pending\n2. Canceled\n3. Finished");
-                status = sc.nextInt();
-                switch (status) {
-                    case 1:
-                        projectStatus = ProjectStatusEnum.PENDING;
-                        break;
-                    case 2:
-                        projectStatus = ProjectStatusEnum.CANCELLED;
-                        break;
-                    case 3:
-                        projectStatus = ProjectStatusEnum.FINISHED;
-                        break;
-                    default:
-                        System.out.println("Invalid status. Please enter 1, 2, or 3.");
-                }
-            } while (status < 1 || status > 3);
+            String name = inputValidator.validateString("Enter the name of the project:");
+            double surface = inputValidator.ValidateDouble("Enter the " + name + " surface (m²):");
             Project project = new Project(name, projectStatus, surface);
             boolean flag = projectService.createProject(project , client.getId());
             if (flag) {
@@ -59,19 +41,18 @@ public class ProjectController {
     }
     public void continueProject(Scanner sc , Project project , Client client) {
         final DevisController devisController = new DevisController(project, client , sc);
+        InputValidator inputValidator = new InputValidator(sc);
         try {
             System.out.println("Calculating total cost\n");
-            System.out.println("do you wish to add Tax to the project?(y/n)\n");
-            if (sc.nextLine().toLowerCase().equals("y")) {
-                System.out.println("Enter the tax rate:\n");
-                double tax = sc.nextDouble();
+            String answer = inputValidator.ValidatePrompt("do you wish to add Tax to the project?(y/n)");
+            if (answer.equals("y")) {
+                double tax = inputValidator.ValidateDouble("Enter the tax rate:");
                 project.setTaxRate(tax);
                 sc.nextLine();
             }
-            System.out.println("do you wish to add a beneficial margin to the project?(y/n)\n");
-            if (sc.nextLine().toLowerCase().equals("y")) {
-                System.out.println("Enter the beneficial margin:\n");
-                double beneficialMargin = sc.nextDouble();
+            String ans = inputValidator.ValidatePrompt("do you wish to add a beneficial margin to the project?(y/n)");
+            if (ans.equals("y")) {
+                double beneficialMargin = inputValidator.ValidateDouble("Enter the beneficial margin:");
                 sc.nextLine();
                 project.setBeneficialMargin(beneficialMargin);
             }
@@ -111,11 +92,8 @@ public class ProjectController {
                     "Client Phone", "Is Professional", "Estimated Amount", "Emission Date", "Expiration Date", "Is Accepted");
 
             projects.forEach((projectID, project) -> {
-                // Retrieve client and devis information
                 Client client = project.getClient();
                 Devis devis = project.getDevis();
-
-                // Print the project details in a formatted way with aligned columns
                 System.out.printf("%-10d %-20s %-15.2f %-15s %-20s %-25s %-15s %-20s %-18.2f %-15s %-15s %-15s\n",
                         projectID,
                         project.getProjectName(),
@@ -141,7 +119,6 @@ public class ProjectController {
             System.out.printf("%-10s %-20s %-15s %-15s %-20s %-25s %-15s %-15s\n",
                     "Project ID", "Project Name", "Surface", "Status", "Client Name", "Client Address",
                     "Client Phone", "Is Professional");
-
             projects.forEach((project) -> {
                 Client client = project.getClient();
                 System.out.printf("%-10d %-20s %-15.2f %-15s %-20s %-25s %-15s %-15s\n",
@@ -159,6 +136,4 @@ public class ProjectController {
             throw new RuntimeException(e);
         }
     }
-
-
 }

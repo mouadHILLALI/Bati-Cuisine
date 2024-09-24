@@ -1,48 +1,44 @@
 package controllers;
-
+import Helpers.InputValidator;
 import entity.Client;
 import services.ClientServices;
-
 import java.util.Scanner;
-
 public class ClientController {
-    final  ClientServices clientServices = new ClientServices();
+    final ClientServices clientServices = new ClientServices();
+    private Scanner scanner;
     private Client client = new Client();
     private ProjectController projectController = new ProjectController(client);
-    public void addClient(Scanner scanner) {
+    public ClientController(Scanner scanner) {
+        this.scanner = scanner;
+    }
+    public void addClient() {
         try {
+            InputValidator inputValidator = new InputValidator(scanner);
             boolean clientExists = false;
-            Client client = new Client();
-                System.out.println("Please enter the client name: ");
-                String name = scanner.nextLine().trim().toLowerCase();
-
-                client = clientServices.find(name);
+            String name = inputValidator.validateString("Please enter the client name:");
+            client = clientServices.find(name);
                 if (client != null) {
                     System.out.println("This client already exists!");
-                    System.out.println("Do you wish to continue with this client or enter a new one? (y/n)");
-                    String answer = scanner.nextLine().trim().toLowerCase();
+                    String answer =inputValidator.ValidatePrompt("Do you wish to continue with this client or enter a new one? (y/n)");
                     if (answer.equals("y")) {
                         projectController.createProject(scanner, client);
                         return;
                     } else if (answer.equals("n")) {
-                       addClient(scanner);
+                       addClient();
+                       return;
                     }
                 }
-            System.out.println("Please enter the client address: ");
-            String address = scanner.nextLine().trim().toLowerCase();
-            System.out.println("Please enter the client phone: ");
-            String phone = scanner.nextLine().trim().toLowerCase();
-            System.out.println("Is the client a professional? (y/n): ");
-            boolean isProfessional = askProfessionalStatus(scanner);
-            client = new Client();
+            String address = inputValidator.validateAddress("Please enter the client address: ");
+            String phone = inputValidator.phoneValidator("Please enter the client phone:");
+            boolean isProfessional = askProfessionalStatus();
+            Client client = new Client();
             client.setName(name);
             client.setAddress(address);
             client.setPhone(phone);
             client.setProfessional(isProfessional);
             if (clientServices.createClient(client)) {
                 System.out.println("Client added successfully!\n");
-                System.out.println("Do you wish to continue with this client? (y/n)\n");
-                String answer = scanner.nextLine().trim().toLowerCase();
+                String answer =inputValidator.ValidatePrompt("Do you wish to continue with this client? y/n");
                 if (answer.equals("y")) {
                     projectController.createProject(scanner, client);
                 } else {
@@ -56,10 +52,11 @@ public class ClientController {
             e.printStackTrace();
         }
     }
-    private boolean askProfessionalStatus(Scanner scanner) {
+    private boolean askProfessionalStatus() {
         boolean professional;
+        InputValidator inputValidator = new InputValidator(scanner);
         while (true) {
-            String answer = scanner.nextLine().trim().toLowerCase();
+            String answer =inputValidator.ValidatePrompt("Is the client a professional? (y/n):") ;
             switch (answer) {
                 case "y":
                     professional = true;
@@ -73,19 +70,18 @@ public class ClientController {
 
         }
     }
-
-    public void find(Scanner scanner) {
+    public void find() {
         try {
-            System.out.println("Please enter the client name: ");
-            String name = scanner.nextLine().toLowerCase();
+            InputValidator inputValidator = new InputValidator(scanner);
+            String name = inputValidator.validateString("Please enter the client name: ");
             client =  clientServices.find(name);
             if (client == null) {
-                System.out.println("Client not found!\nDo you wish to add this client ? (y/n)\n");
-                String answer = scanner.nextLine().toLowerCase();
+                String answer = inputValidator.ValidatePrompt("Do you wish to continue with this client? y/n");
                 if (answer.equals("y")) {
-                    addClient(scanner);
+                    addClient();
                 }else if (answer.equals("n")) {
                     System.out.println("Returning to main menu...");
+
                 }
             }else {
                 System.out.println("Client found!");
@@ -98,8 +94,7 @@ public class ClientController {
                         client.getAddress(),
                         client.getPhone(),
                         client.isProfessional() ? "Yes" : "No"));
-                System.out.println("Do you wish to add a project to this client? (y/n)\n");
-                String answer = scanner.nextLine().toLowerCase();
+                String answer =inputValidator.ValidatePrompt("Do you wish to continue with this client? y/n");
                 if (answer.equals("y")) {
                     projectController.createProject(scanner , client);
                 }else if (answer.equals("n")) {

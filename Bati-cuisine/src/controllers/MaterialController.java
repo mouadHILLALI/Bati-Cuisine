@@ -1,5 +1,6 @@
 package controllers;
 
+import Helpers.InputValidator;
 import entity.Client;
 import entity.Material;
 import entity.Project;
@@ -17,34 +18,22 @@ public class MaterialController {
     }
     public void addMaterial(Scanner scanner, Project project) {
         try {
+            InputValidator inputValidator = new InputValidator(scanner);
             LabourerController labourerController = new LabourerController(client);
-            System.out.println("Do you wish to add material to the project " + project.getProjectName() + "? (y/n)");
-            String answer = scanner.nextLine().toLowerCase();
+            String answer = inputValidator.ValidatePrompt("Do you wish to add material to the project " + project.getProjectName() + "? (y/n)");
             List<Material> materials = new ArrayList<>();
             if (answer.equals("y")) {
                 boolean continueAdding = true;
                 while (continueAdding) {
-                    System.out.println("Enter material name:");
-                    String materialName = scanner.nextLine();
-
-                    System.out.println("Enter material unit cost:");
-                    double unitCost = scanner.nextDouble();
-
-                    System.out.println("Enter material quantity:");
-                    double quantity = scanner.nextDouble();
-
-                    System.out.println("Enter material transportation cost:");
-                    double transportCost = scanner.nextDouble();
-
-                    System.out.println("Enter material quality coefficient (1.0 = standard, > 1.0 = high quality):");
-                    double qualityCoeff = scanner.nextDouble();
-                    // Clear the buffer after nextDouble()
+                    String materialName = inputValidator.validateString("Enter material name: ");
+                    double unitCost = inputValidator.ValidateDouble("Enter material unit cost: ");
+                    double quantity = inputValidator.ValidateDouble("Enter material quantity: ");
+                    double transportCost = inputValidator.ValidateDouble("Enter material transport cost: ");
+                    double qualityCoeff = inputValidator.ValidateDouble("Enter material quality coefficient (1.0 = standard, > 1.0 = high quality): ");
                     scanner.nextLine();
-                    // Create material and add to the list
                     Material material = new Material(materialName, unitCost, quantity,  transportCost, qualityCoeff);
                     materials.add(material);
-                    System.out.println("Do you wish to add another material? (y/n)");
-                    answer = scanner.nextLine().toLowerCase();
+                    answer =inputValidator.ValidatePrompt("Do you wish to add another material? (y/n)");
                     if (!answer.equals("y")) {
                         continueAdding = false;
                     }
@@ -62,8 +51,7 @@ public class MaterialController {
             }
         } catch (InputMismatchException e) {
             System.out.println("Invalid input: " + e.getMessage());
-            scanner.nextLine(); // Clear the scanner buffer after invalid input
+            scanner.nextLine();
         }
     }
-
 }
